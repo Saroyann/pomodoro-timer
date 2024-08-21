@@ -5,6 +5,12 @@ const Timer = ({ breakLength, sessionLength }) => {
     const [isSession, setIsSession] = useState(true);
     const [isActive, setIsActive] = useState(false);
     const intervalRef = useRef(null);
+    const audioRef = useRef(null);
+    const audioSrc = 'https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav';
+
+    useEffect(() => {
+        audioRef.current = new Audio(audioSrc)
+    }, [])
 
     useEffect(() => {
         if (isSession) {
@@ -25,6 +31,7 @@ const Timer = ({ breakLength, sessionLength }) => {
             }, 1000);
         } else if (timeLeft === 0) {
             clearInterval(intervalRef.current);
+            audioRef.current.play();
             if (isSession) {
                 setIsSession(false);
                 setTimeLeft(breakLength * 60);
@@ -57,9 +64,9 @@ const Timer = ({ breakLength, sessionLength }) => {
 
     return (
         <div className='flex flex-col justify-center text-center text-white'>
-            <div className='border-white border-6 rounded-xl p-10'>
+            <div className='border-white border-[6px] rounded-xl p-10'>
                 <div className='text-center text-3xl'>{isSession ? 'Session' : 'Break'}</div>
-                <div className='text-center text-7xl'>{formatTime(timeLeft)}</div>
+                <div className={`text-center text-7xl ${timeLeft <= 30 ? 'text-red-500' : ''}`}>{formatTime(timeLeft)}</div>
             </div>
             <div className='flex justify-between items-center mt-5'>
                 <div className='text-2xl cursor-pointer' onClick={toggleTimer}>
